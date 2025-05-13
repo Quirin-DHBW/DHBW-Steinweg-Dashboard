@@ -103,7 +103,7 @@ if __name__ == "__main__":
     Input("filter-zeitraum", "end_date"),
 )
 def update_trend(abteilung, kostenart, start, end):
-    df_filtered = df.copy()
+    df_filtered = df.copy(deep=True)
 
     if abteilung:
         df_filtered = df_filtered[df_filtered["Abteilung"] == abteilung]
