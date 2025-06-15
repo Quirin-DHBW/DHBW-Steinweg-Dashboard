@@ -1,10 +1,13 @@
 import sys, os
 os.chdir(os.path.dirname(sys.argv[0]))
 
-import dash
-from dash import Dash, html, dcc
-import plotly.express as px
+import sqlite3
+
 import pandas as pd
+
+import dash
+import plotly.express as px
+from dash import Dash, html, dcc
 from dash.dependencies import Input, Output
 import dash_auth
 
@@ -72,6 +75,9 @@ auth = dash_auth.BasicAuth(
 # Beispielhafte Daten laden
 df = pd.read_csv("data/kosten.csv")
 df["Monat"] = pd.to_datetime(df["Monat"])
+
+conn = sqlite3.connect("einzelkonten.db")
+df_db = pd.read_sql_table("buchungssaetze", conn)
 
 # Beispielhafte Visualisierung
 kostenart_fig = px.bar(df, x="Kostenart", y="Ist", color="Abteilung", barmode="group")

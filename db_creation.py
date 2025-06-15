@@ -1,3 +1,6 @@
+import sys, os
+os.chdir(os.path.dirname(sys.argv[0]))
+
 import sqlite3
 import random
 import datetime
