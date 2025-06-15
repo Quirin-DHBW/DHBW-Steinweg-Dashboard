@@ -8,6 +8,11 @@ import pandas as pd
 from dash.dependencies import Input, Output
 import dash_auth
 
+
+##########################
+## INITIAL APP SETUP #####
+##########################
+
 # Dashboard Konfigurationswahl (nach Benutzer)
 USER_CONFIGURATION_SELECTION = {
     "Daniela.Düsentrieb@Firma.p" : "Entwickleransicht",
@@ -29,9 +34,11 @@ user_data = {
 
 def auth_function(username, password):
     global user_data
-    if user_data["is_logged_in"]:
-        print(user_data)
+    if user_data["is_logged_in"]: # No need to re-authenticate if already logged in
+        #print(user_data)
+        print("Layout update...", end="\r")
         return True
+    
     elif username in USER_CONFIGURATION_SELECTION.keys() and password == USER_CONFIGURATION_SELECTION[username]:
         print(f"Benutzer {username} authentifiziert mit Konfiguration: {USER_CONFIGURATION_SELECTION[username]}")
 
@@ -43,6 +50,7 @@ def auth_function(username, password):
         print(user_data)
 
         return True
+    
     else:
         return False
 
@@ -56,12 +64,17 @@ auth = dash_auth.BasicAuth(
     secret_key="iamaverysecretkeyyandiamcoolandyoudontknowiexistyesyes" # Placeholder to silence a warning, as no Flask App exists yet
 )
 
+
+##############################
+## DATA LOADING AND PREP #####
+##############################
+
 # Beispielhafte Daten laden
 df = pd.read_csv("data/kosten.csv")
 df["Monat"] = pd.to_datetime(df["Monat"])
 
 # Beispielhafte Visualisierung
-fig = px.bar(df, x="Kostenart", y="Ist", color="Abteilung", barmode="group")
+kostenart_fig = px.bar(df, x="Kostenart", y="Ist", color="Abteilung", barmode="group")
 
 # === KPI-Berechnungen ===
 total_ist = df["Ist"].sum()
@@ -69,18 +82,60 @@ total_budget = df["Budget"].sum()
 abweichung = total_ist - total_budget
 abweichung_farbe = "green" if abweichung <= 0 else "red"
 
-# Gruppieren nach Monat
-df_trend = df.groupby("Monat")[["Ist", "Budget"]].sum().reset_index()
-# Zeitreihendiagramm
-fig_trend = px.line(df_trend, x="Monat", y=["Ist", "Budget"],
-                    markers=True, title="Kostenentwicklung über Zeit",
-                    labels={"value": "Euro", "variable": "Kategorie"})
 
+#################################
+## DYNAMIC GRAPH GENERATION #####
+#################################
+
+def get_trend_fig(abteilung=None, kostenart=None, start=None, end=None):
+    print("Figure being updated with:", abteilung, kostenart, start, end)
+
+    global df
+    df_filtered = df.copy(deep=True)
+
+    #print(df_filtered.head(50))
+
+    try:
+        if abteilung != None:
+            #print("CHECKING ABTEILUNG")
+            df_filtered = df_filtered[df_filtered["Abteilung"] == abteilung]
+
+        if kostenart != None:
+            #print("CHECKING KOSTENART")
+            df_filtered = df_filtered[df_filtered["Kostenart"] == kostenart]
+
+        df_filtered = df_filtered[
+            (df_filtered["Monat"] >= pd.to_datetime(start)) &
+            (df_filtered["Monat"] <= pd.to_datetime(end))
+        ]
+
+        df_output = df_filtered.groupby("Monat")[["Ist", "Budget"]].sum().reset_index()
+
+        #print(df_output.head(50))
+    except Exception as e:
+        print("EXCEPTION TRIGGERED, DISPLAYING DEFAULT GRAPH\n", e)
+        df_output = df
+
+    fig = px.line(df_output,
+                  x="Monat",
+                  y=["Ist", "Budget"],
+                  markers=True,
+                  title="Kostenentwicklung über Zeit",
+                  labels={"value": "Euro", "variable": "Kategorie"})
+    
+    fig.update_layout()
+
+    return fig
+
+
+default_figure = get_trend_fig()
+
+##################################
+## DYNAMIC LAYOUR GENERATION #####
+##################################
 
 def layout_function():
     global user_data
-    if not user_data["is_logged_in"]:
-        return html.Div("Bitte melden Sie sich an, um das Dashboard zu sehen.")
     
     html_layout = html.Div([
                     html.H1("Dashboard zur Kostenüberwachung"),
@@ -104,11 +159,9 @@ def layout_function():
                     ], style={"display": "flex", "gap": "20px"}),
                     
                     html.H2("Trendanalyse – Entwicklung der Gesamtkosten"),
-                    dcc.Graph(id="trend-diagramm", figure=fig_trend),    
+                    dcc.Graph(id="trend-diagramm", figure=default_figure),    
 
                     html.Hr(),
-
-                    dcc.Graph(figure=fig),
 
                     html.Div([
                         html.Label("Abteilung auswählen:"),
@@ -135,14 +188,29 @@ def layout_function():
                             display_format="YYYY-MM"
                         ),
                     ], 
-                    style={"marginBottom": "20px", "width": "60%"})
+                    style={"marginBottom": "20px", "width": "60%"}),
+
+                    dcc.Graph(figure=kostenart_fig)
                 ])
 
     return html_layout
 
+custom_layout = layout_function()
 
-# Layout mit KPIs
-app.layout = layout_function
+
+################
+## APP RUN #####
+################
+
+app.layout = custom_layout
+
+app.callback(
+        Output("trend-diagramm", "figure"),
+        Input("filter-abteilung", "value"),
+        Input("filter-kostenart", "value"),
+        Input("filter-zeitraum", "start_date"),
+        Input("filter-zeitraum", "end_date")
+    )(lambda abteilung, kostenart, start, end: get_trend_fig(abteilung, kostenart, start, end))
 
 
 if __name__ == "__main__":
@@ -152,34 +220,3 @@ if __name__ == "__main__":
 # http://127.0.0.1:8050/
 # to see dashboard
 
-
-# callback
-@app.callback(
-    Output("trend-diagramm", "figure"),
-    Input("filter-abteilung", "value"),
-    Input("filter-kostenart", "value"),
-    Input("filter-zeitraum", "start_date"),
-    Input("filter-zeitraum", "end_date"),
-)
-
-
-def update_trend(abteilung, kostenart, start, end):
-    df_filtered = df.copy(deep=True)
-
-    if abteilung:
-        df_filtered = df_filtered[df_filtered["Abteilung"] == abteilung]
-    if kostenart:
-        df_filtered = df_filtered[df_filtered["Kostenart"] == kostenart]
-
-    df_filtered = df_filtered[
-        (df_filtered["Monat"] >= pd.to_datetime(start)) &
-        (df_filtered["Monat"] <= pd.to_datetime(end))
-    ]
-
-    df_trend = df_filtered.groupby("Monat")[["Ist", "Budget"]].sum().reset_index()
-
-    fig = px.line(df_trend, x="Monat", y=["Ist", "Budget"],
-                  markers=True, title="Kostenentwicklung über Zeit",
-                  labels={"value": "Euro", "variable": "Kategorie"})
-
-    return fig
