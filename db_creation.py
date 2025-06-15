@@ -16,7 +16,7 @@ def gen_random_entries(account_structure, years, min_entries, max_entries):
                         amount = round(random.uniform(100, 3000), 2)
 
                         cursor.execute("""
-                        INSERT INTO account_structure (konto, bezeichnung, kategorie, buchungsdatum, betrag)
+                        INSERT INTO buchungssaetze (konto, bezeichnung, kategorie, buchungsdatum, betrag)
                         VALUES (?, ?, ?, ?, ?)
                         """, (account, description, category, date, amount)) 
 
@@ -84,7 +84,7 @@ min_entries = 1
 max_entries = 10
 years = [2022, 2023, 2024]
 
-gen_random_entries(account_structure, min_entries, max_entries, years)
+gen_random_entries(account_structure, years, min_entries, max_entries)
 conn.commit()
 conn.close()
 
