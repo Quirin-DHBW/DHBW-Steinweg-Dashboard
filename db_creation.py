@@ -1,6 +1,3 @@
-import sys, os
-os.chdir(os.path.dirname(sys.argv[0]))
-
 import sqlite3
 import random
 import datetime
@@ -19,9 +16,16 @@ def gen_random_entries(account_structure, years, min_entries, max_entries):
                         amount = round(random.uniform(100, 3000), 2)
 
                         cursor.execute("""
-                        INSERT INTO buchungssaetze (konto, bezeichnung, kategorie, buchungsdatum, betrag)
-                        VALUES (?, ?, ?, ?, ?)
+                            INSERT INTO buchungssaetze (konto, bezeichnung, kategorie, buchungsdatum, betrag)
+                            VALUES (?, ?, ?, ?, ?)
                         """, (account, description, category, date, amount)) 
+
+        abteilungen = ["Controlling", "Finanz", "Geschäftsführung", "Technik", "Buchhaltung", "Facility Management", "Fuhrpark", "Logistik", "Produktion", "Vertrieb", "IT", "HR"]
+        for abteilung in abteilungen:
+            cursor.execute("""
+                INSERT INTO abteilungen (abteilung, budget, year)
+                VALUES (?, ?, ?)
+            """, (abteilung, random.randint(100000, 500000), year)) 
 
 
 conn = sqlite3.connect("einzelkonten.db")
@@ -35,15 +39,20 @@ cursor.execute("""
         bezeichnung TEXT,
         kategorie TEXT,
         buchungsdatum DATE,
-        betrag REAL
+        betrag REAL,
         FOREIGN KEY(fachbereich) REFERENCES abteilungen(abteilungs_id)
     )
+""")
+
+cursor.execute("""
     CREATE TABLE IF NOT EXISTS abteilungen (
         abteilungs_id INTEGER PRIMARY KEY AUTOINCREMENT,
         abteilung TEXT,
-        budget TEXT
+        budget REAL,
+        year INTEGER
     )           
 """)
+
 
 account_structure = {
     "Raumkosten": {
