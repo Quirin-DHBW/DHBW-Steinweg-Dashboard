@@ -36,9 +36,9 @@ cursor.execute("""
         kategorie TEXT,
         buchungsdatum DATE,
         betrag REAL
-        FOREIGN KEY(abteilung) REFERENCES abteilungen(abteilungs_id)
+        FOREIGN KEY(fachbereich) REFERENCES abteilungen(abteilungs_id)
     )
-        CREATE TABLE IF NOT EXISTS abteilungen (
+    CREATE TABLE IF NOT EXISTS abteilungen (
         abteilungs_id INTEGER PRIMARY KEY AUTOINCREMENT,
         abteilung TEXT,
         budget TEXT
