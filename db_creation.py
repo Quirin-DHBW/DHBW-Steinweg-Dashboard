@@ -19,6 +19,7 @@ def gen_random_entries(account_structure, years, min_entries, max_entries):
         "IT": [4806, 4925],  # Software maintenance and internet
         "HR": [4660, 4663, 4664, 4945]  # Travel for recruiting/events, and training
     }
+
     for year in years:
         for month in range(1, 13):
             for department, permittable_accounts in department_accounts.items():
@@ -35,7 +36,19 @@ def gen_random_entries(account_structure, years, min_entries, max_entries):
                                     VALUES (?, ?, ?, ?, ?, ?)
                                 """, (account, department, description, category, date, amount)) 
 
-        abteilungen = ["Controlling", "Finanz", "Geschäftsführung", "Technik", "Buchhaltung", "Facility Management", "Fuhrpark", "Logistik", "Produktion", "Vertrieb", "IT", "HR"]
+        abteilungen = ["Controlling", 
+                       "Finanz", 
+                       "Geschäftsführung", 
+                       "Technik", 
+                       "Buchhaltung", 
+                       "Facility Management", 
+                       "Fuhrpark", 
+                       "Logistik", 
+                       "Produktion", 
+                       "Vertrieb", 
+                       "IT", 
+                       "HR"]
+        
         for abteilung in abteilungen:
             cursor.execute("""
                 INSERT INTO abteilungen (abteilung, budget, year)
