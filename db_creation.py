@@ -26,13 +26,20 @@ cursor = conn.cursor()
 
 cursor.execute("""
     CREATE TABLE IF NOT EXISTS buchungssaetze (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        buchungs_id INTEGER PRIMARY KEY AUTOINCREMENT,
         konto INTEGER,
+        fachbereich INTEGER,
         bezeichnung TEXT,
         kategorie TEXT,
         buchungsdatum DATE,
         betrag REAL
+        FOREIGN KEY(abteilung) REFERENCES abteilungen(abteilungs_id)
     )
+        CREATE TABLE IF NOT EXISTS abteilungen (
+        abteilungs_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        abteilung TEXT,
+        budget TEXT
+    )           
 """)
 
 account_structure = {
