@@ -6,19 +6,34 @@ def gen_random_entries(account_structure, years, min_entries, max_entries):
     """
     This function fills the databank with random data
     """
+    department_accounts = {
+        "Finanz": [4320, 4340, 4360, 4366],  # Responsible for cash flow, taxes etc., but not booking ops
+        "Geschäftsführung": [4320, 4340, 4360],  # High-level decisions; may book business taxes, general ops costs
+        "Technik": [4240, 4805, 4806, 4809],  # Utilities and maintenance of technical equipment
+        "Buchhaltung": [4930],  # Office supplies, minor costs directly for their own needs
+        "Facility Management": [4210, 4230, 4240, 4250, 4801, 4805, 4809],  # Building operation & upkeep
+        "Fuhrpark": [4510, 4520, 4530, 4540],  # All vehicle-related costs
+        "Logistik": [4710, 4730, 4750],  # Packing, shipping, transport insurances
+        "Produktion": [4710, 4730, 4750, 4805],  # Material & machine upkeep
+        "Vertrieb": [4760, 4663, 4664, 4666],  # Sales commissions, travel costs
+        "IT": [4806, 4925],  # Software maintenance and internet
+        "HR": [4660, 4663, 4664, 4945]  # Travel for recruiting/events, and training
+    }
     for year in years:
         for month in range(1, 13):
-            for category, accounts in account_structure.items():
-                for account, description in accounts.items():
-                    for _ in range(random.randint(min_entries, max_entries)):
-                        day = random.randint(1, 28)
-                        date = datetime.date(year, month, day)
-                        amount = round(random.uniform(100, 3000), 2)
+            for department, permittable_accounts in department_accounts.items():
+                for category, accounts in account_structure.items():
+                    for account, description in accounts.items():
+                        if account in permittable_accounts:
+                            for _ in range(random.randint(min_entries, max_entries)):
+                                day = random.randint(1, 28)
+                                date = datetime.date(year, month, day)
+                                amount = round(random.uniform(100, 3000), 2)
 
-                        cursor.execute("""
-                            INSERT INTO buchungssaetze (konto, bezeichnung, kategorie, buchungsdatum, betrag)
-                            VALUES (?, ?, ?, ?, ?)
-                        """, (account, description, category, date, amount)) 
+                                cursor.execute("""
+                                    INSERT INTO buchungssaetze (konto, fachbereich, bezeichnung, kategorie, buchungsdatum, betrag)
+                                    VALUES (?, ?, ?, ?, ?, ?)
+                                """, (account, department, description, category, date, amount)) 
 
         abteilungen = ["Controlling", "Finanz", "Geschäftsführung", "Technik", "Buchhaltung", "Facility Management", "Fuhrpark", "Logistik", "Produktion", "Vertrieb", "IT", "HR"]
         for abteilung in abteilungen:
