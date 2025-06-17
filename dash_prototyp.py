@@ -207,7 +207,7 @@ def gen_layout():
             case "Andreas.Auditor@Firma.p":
                 layout_obj = layout.BetrachterLayout(user_data)
             case "Franziska.Fachabteilung@Firma.p":
-                print("Franziska.Fachabteilung@Firma.p detected, using BetrachterLayout")
+                default_figure = get_trend_fig(abteilung="Produktion")
                 layout_obj = layout.BetrachterLayout(user_data)
             case "Sigrid.Systemadmin@Firma.p":
                 layout_obj = layout.BasicLayout(user_data)
