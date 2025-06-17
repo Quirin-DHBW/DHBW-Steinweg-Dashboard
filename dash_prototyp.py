@@ -79,7 +79,7 @@ df = pd.read_csv("data/kosten.csv")
 df["Monat"] = pd.to_datetime(df["Monat"])
 
 conn = sqlite3.connect("einzelkonten.db")
-df_db = pd.read_sql_table("buchungssaetze", conn)
+df_db = pd.read_sql_query("SELECT * FROM buchungssaetze", conn)
 
 # Beispielhafte Visualisierung
 kostenart_fig = px.bar(df, x="Kostenart", y="Ist", color="Abteilung", barmode="group")
@@ -137,6 +137,7 @@ def get_trend_fig(abteilung=None, kostenart=None, start=None, end=None):
 
 
 default_figure = get_trend_fig()
+
 
 ##################################
 ## DYNAMIC LAYOUR GENERATION #####
