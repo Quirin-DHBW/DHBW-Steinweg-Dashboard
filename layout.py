@@ -79,7 +79,7 @@ class BetrachterLayout(BasicLayout):
     def __init__(self, user_data):
         super().__init__(user_data)
 
-    def layout(self, df, total_ist, total_budget, abweichung, abweichung_farbe, default_figure, kostenart_fig):
+    def layout_function(self, df, total_ist, total_budget, abweichung, abweichung_farbe, default_figure, kostenart_fig):
         return self.layout_function(df, total_ist, total_budget, abweichung, abweichung_farbe, default_figure, kostenart_fig)
     
 
@@ -87,5 +87,7 @@ class PowerUserLayout(BasicLayout):
     def __init__(self, user_data):
         super().__init__(user_data)
 
-    def layout(self, df, total_ist, total_budget, abweichung, abweichung_farbe, default_figure, kostenart_fig):
+    def layout_function(self, df, total_ist, total_budget, abweichung, abweichung_farbe, default_figure, kostenart_fig):
         return self.layout_function(df, total_ist, total_budget, abweichung, abweichung_farbe, default_figure, kostenart_fig)
+    
+    

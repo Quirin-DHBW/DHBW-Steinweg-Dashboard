@@ -191,40 +191,60 @@ default_figure = get_trend_fig()
 ## DYNAMIC LAYOUT GENERATION #####
 ##################################
 
-match user_data["username"]:
-    case "Daniela.Düsentrieb@Firma.p":
-        layout_obj = layout.BasicLayout(user_data)
-    case "Sven.Schau@Firma.p":
-        layout_obj = layout.BetrachterLayout(user_data)
-    case "Ludwig.Leistung@Firma.p":
-        layout_obj = layout.PowerUserLayout(user_data)
-    case "Connie.Controlling@Firma.p":
-        layout_obj = layout.PowerUserLayout(user_data)
-    case "Gertholt.Geschäftsführung@Firma.p":
-        layout_obj = layout.PowerUserLayout(user_data)
-    case "Andreas.Auditor@Firma.p":
-        layout_obj = layout.BetrachterLayout(user_data)
-    case "Franziska.Fachabteilung@Firma.p":
-        layout_obj = layout.BetrachterLayout(user_data)
-    case "Sigrid.Systemadmin@Firma.p":
-        layout_obj = layout.BasicLayout(user_data)
-    case _:
-        layout_obj = layout.BasicLayout(user_data)
+def gen_layout():
+    if user_data["is_logged_in"]:
+        match user_data["username"]:
+            case "Daniela.Düsentrieb@Firma.p":
+                layout_obj = layout.BasicLayout(user_data)
+            case "Sven.Schau@Firma.p":
+                layout_obj = layout.BetrachterLayout(user_data)
+            case "Ludwig.Leistung@Firma.p":
+                layout_obj = layout.PowerUserLayout(user_data)
+            case "Connie.Controlling@Firma.p":
+                layout_obj = layout.PowerUserLayout(user_data)
+            case "Gertholt.Geschäftsführung@Firma.p":
+                layout_obj = layout.PowerUserLayout(user_data)
+            case "Andreas.Auditor@Firma.p":
+                layout_obj = layout.BetrachterLayout(user_data)
+            case "Franziska.Fachabteilung@Firma.p":
+                print("Franziska.Fachabteilung@Firma.p detected, using BetrachterLayout")
+                layout_obj = layout.BetrachterLayout(user_data)
+            case "Sigrid.Systemadmin@Firma.p":
+                layout_obj = layout.BasicLayout(user_data)
+            case _:
+                layout_obj = layout.BasicLayout(user_data)
 
-custom_layout = layout_obj.layout_function(df,
-                                           total_ist,
-                                           total_budget,
-                                           abweichung,
-                                           abweichung_farbe,
-                                           default_figure,
-                                           kostenart_fig)
+
+        print(layout_obj.user_data)
+
+        custom_layout = layout_obj.layout_function(df,
+                                                total_ist,
+                                                total_budget,
+                                                abweichung,
+                                                abweichung_farbe,
+                                                default_figure,
+                                                kostenart_fig)
+        
+        return custom_layout
+    else:
+        print("No user data found, using default layout")
+        custom_layout = layout.BasicLayout(user_data).layout_function(
+            df,
+            total_ist,
+            total_budget,
+            abweichung,
+            abweichung_farbe,
+            default_figure,
+            kostenart_fig
+        )
+        return custom_layout
 
 
 ################
 ## APP RUN #####
 ################
 
-app.layout = custom_layout
+app.layout = gen_layout
 
 app.callback(
         Output("trend-diagramm", "figure"),
