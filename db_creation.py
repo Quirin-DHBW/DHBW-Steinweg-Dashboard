@@ -56,7 +56,7 @@ def gen_random_entries(account_structure, years, min_entries, max_entries):
             """, (abteilung, random.randint(100000, 500000), year)) 
 
 
-conn = sqlite3.connect("einzelkonten.db")
+conn = sqlite3.connect("data/einzelkonten.db")
 cursor = conn.cursor()
 
 cursor.execute("""

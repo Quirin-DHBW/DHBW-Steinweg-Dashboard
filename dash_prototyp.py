@@ -74,22 +74,70 @@ auth = dash_auth.BasicAuth(
 ## DATA LOADING AND PREP #####
 ##############################
 
-# Beispielhafte Daten laden
-df = pd.read_csv("data/kosten.csv")
-df["Monat"] = pd.to_datetime(df["Monat"])
+# load DB into dataframe
+query = """
+SELECT 
+    b.buchungs_id,
+    b.konto as Einzelkontonummer,
+    b.fachbereich as Abteilung,
+    a.abteilung,
+    a.budget as Budget,
+    a.year as Jahr,
+    b.bezeichnung as Kostenart,
+    b.kategorie as Kategorie,
+    b.buchungsdatum,
+    b.betrag as Ist
+FROM 
+    buchungssaetze b
+JOIN 
+    abteilungen a 
+ON 
+    b.fachbereich = a.abteilung
+"""
 
-conn = sqlite3.connect("einzelkonten.db")
-df_db = pd.read_sql_query("SELECT * FROM buchungssaetze", conn)
+conn = sqlite3.connect("data/einzelkonten.db")
 
-# Beispielhafte Visualisierung
-kostenart_fig = px.bar(df, x="Kostenart", y="Ist", color="Abteilung", barmode="group")
+df = pd.read_sql_query(query, conn)
+df["buchungsdatum"] = pd.to_datetime(df["buchungsdatum"])
+df["Monat"] = df["buchungsdatum"].dt.to_period("M").dt.to_timestamp()
 
-# === KPI-Berechnungen ===
-total_ist = df["Ist"].sum()
-total_budget = df["Budget"].sum()
+conn.close()
+
+# monthly plan/actual
+df_kpi_aggregation = df.groupby(["Abteilung", "Kategorie", "Monat", "Jahr"]).agg(
+    ist_summe=("Ist", "sum"),
+    budget_summe=("Budget", "first")
+).reset_index()
+
+# plan/actual comparison
+df_kpi_diff = df_kpi_aggregation.copy()
+df_kpi_diff["abweichung"] = df_kpi_diff["ist_summe"] - df_kpi_diff["budget_summe"]
+df_kpi_diff["budgetüberschreitung"] = df_kpi_diff["abweichung"] > 0
+
+# raw, for drilldowns
+df_accounts = df[[
+    "buchungs_id", "Abteilung", "Einzelkontonummer", "Kostenart",
+    "Kategorie", "buchungsdatum", "Monat", "Ist", "Budget", "Jahr"
+]]
+
+# === total KPIs (adjustable year) - for initial functionality ===
+current_year = 2024
+df_year = df[df["Jahr"] == current_year]
+
+total_ist = df_year["Ist"].sum()
+total_budget = df_year.drop_duplicates(subset=["Abteilung", "Jahr"])["Budget"].sum()
 abweichung = total_ist - total_budget
 abweichung_farbe = "green" if abweichung <= 0 else "red"
 
+# ye olde kostenart_fig, now with new dataset :3
+kostenart_fig = px.bar(
+    df_kpi_aggregation[df_kpi_aggregation["Jahr"] == current_year],
+    x="Kategorie",
+    y="ist_summe",
+    color="Abteilung",
+    barmode="group",
+    title="Kostenarten nach Abteilung (Ist-Werte)"
+)
 
 #################################
 ## DYNAMIC GRAPH GENERATION #####
@@ -140,7 +188,7 @@ default_figure = get_trend_fig()
 
 
 ##################################
-## DYNAMIC LAYOUR GENERATION #####
+## DYNAMIC LAYOUT GENERATION #####
 ##################################
 
 match user_data["username"]:
