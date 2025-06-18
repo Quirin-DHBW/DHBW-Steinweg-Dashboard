@@ -146,8 +146,8 @@ kostenart_fig = px.bar(
 def get_trend_fig(abteilung=None, kostenart=None, start=None, end=None):
     print("Figure being updated with:", abteilung, kostenart, start, end)
 
-    global df
-    df_filtered = df.copy(deep=True)
+    global df_accounts
+    df_filtered = df_accounts.copy(deep=True)
 
     #print(df_filtered.head(50))
 
@@ -192,6 +192,7 @@ default_figure = get_trend_fig()
 ##################################
 
 def gen_layout():
+    global default_figure
     if user_data["is_logged_in"]:
         match user_data["username"]:
             case "Daniela.Düsentrieb@Firma.p":
