@@ -168,13 +168,15 @@ class BetrachterLayout(BasicLayout):
 
                         html.Hr(),
                         html.Div([
-                            html.Label("Abteilung auswählen:"),
+                
+                            # Kein sichtbares Abteilungs-Dropdown, aber Standardwert gesetzt
                             dcc.Dropdown(
-                                options=[{"label": abt, "value": abt} for abt in sorted(df["Abteilung"].unique())],
-                                value=None,
+                                options=[{"label": "Produktion", "value": "Produktion"}],
+                                value="Produktion",
                                 id="filter-abteilung",
-                                placeholder="Alle Abteilungen"
-                            ),
+                                style={"display": "none"}  # Versteckt im Layout
+                            ),  
+
                             html.Label("Kostenart auswählen:"),
                             dcc.Dropdown(
                                 options=[{"label": ka, "value": ka} for ka in sorted(df["Kostenart"].unique())],
