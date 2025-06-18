@@ -167,16 +167,14 @@ class BetrachterLayout(BasicLayout):
                         dcc.Graph(id="trend-diagramm", figure=default_figure),    
 
                         html.Hr(),
-
                         html.Div([
-                            # html.Label("Abteilung auswählen:"),
-                            # dcc.Dropdown(
-                            #     options=[{"label": abt, "value": abt} for abt in sorted(df["Abteilung"].unique())],
-                            #     value=None,
-                            #     id="filter-abteilung",
-                            #     placeholder="Alle Abteilungen"
-                            # ),
-                        
+                            html.Label("Abteilung auswählen:"),
+                            dcc.Dropdown(
+                                options=[{"label": abt, "value": abt} for abt in sorted(df["Abteilung"].unique())],
+                                value=None,
+                                id="filter-abteilung",
+                                placeholder="Alle Abteilungen"
+                            ),
                             html.Label("Kostenart auswählen:"),
                             dcc.Dropdown(
                                 options=[{"label": ka, "value": ka} for ka in sorted(df["Kostenart"].unique())],

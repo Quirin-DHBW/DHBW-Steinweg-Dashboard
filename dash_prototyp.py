@@ -192,6 +192,7 @@ default_figure = get_trend_fig()
 ##################################
 
 def gen_layout():
+    global default_figure
     if user_data["is_logged_in"]:
         match user_data["username"]:
             case "Daniela.Düsentrieb@Firma.p":
