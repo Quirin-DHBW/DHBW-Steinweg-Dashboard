@@ -20,23 +20,55 @@ class BasicLayout:
                         html.H1("Dashboard zur Kostenüberwachung"),
                         html.H2(f"Willkommen, {self.user_data['username']}!"),
                         
+                        # Trendanalyse
                         html.Div([
                             html.Div([
-                                html.H3("Gesamtkosten"),
-                                html.P(f"{total_ist:,.2f} €")
-                            ], style={"padding": "10px", "border": "1px solid #ccc", "width": "25%"}),
+                                html.H3("Gesamtkosten", style={"textAlign": "center"}),
+                                html.P(f"{total_ist:,.2f} €", style={"textAlign": "center", "margin": "0"})
+                            ], style={
+                                "padding": "10px",
+                                "border": "1px solid #ccc",
+                                "flex": "1",
+                                "display": "flex",
+                                "flexDirection": "column",
+                                "justifyContent": "center"
+                            }),
                             
                             html.Div([
-                                html.H3("Gesamtbudget"),
-                                html.P(f"{total_budget:,.2f} €")
-                            ], style={"padding": "10px", "border": "1px solid #ccc", "width": "25%"}),
+                                html.H3("Gesamtbudget", style={"textAlign": "center"}),
+                                html.P(f"{total_budget:,.2f} €", style={"textAlign": "center", "margin": "0"})
+                            ], style={
+                                "padding": "10px",
+                                "border": "1px solid #ccc",
+                                "flex": "1",
+                                "display": "flex",
+                                "flexDirection": "column",
+                                "justifyContent": "center"
+                            }),
                             
                             html.Div([
-                                html.H3("Abweichung"),
-                                html.P(f"{abweichung:,.2f} €", style={"color": abweichung_farbe})
-                            ], style={"padding": "10px", "border": "1px solid #ccc", "width": "25%"}),
-                        ], style={"display": "flex", "gap": "20px"}),
-                        
+                                html.H3("Abweichung", style={"textAlign": "center"}),
+                                html.P(f"{abweichung:,.2f} €", style={
+                                    "textAlign": "center",
+                                    "color": abweichung_farbe,
+                                    "margin": "0"
+                                })
+                            ], style={
+                                "padding": "10px",
+                                "border": "1px solid #ccc",
+                                "flex": "1",
+                                "display": "flex",
+                                "flexDirection": "column",
+                                "justifyContent": "center"
+                            }),
+                        ], style={
+                            "display": "flex",
+                            "gap": "20px",
+                            "justifyContent": "space-between",
+                            "alignItems": "center"
+                        }),
+                        # Hier wird das Diagramm für die Gesamtkosten angezeigt
+
                         html.H2("Trendanalyse – Entwicklung der Gesamtkosten"),
                         dcc.Graph(id="trend-diagramm", figure=default_figure),    
 
@@ -168,13 +200,14 @@ class BetrachterLayout(BasicLayout):
 
                         html.Hr(),
                         html.Div([
-                            html.Label("Abteilung auswählen:"),
+                            # Kein sichtbares Abteilungs-Dropdown, aber Standardwert gesetzt
                             dcc.Dropdown(
-                                options=[{"label": abt, "value": abt} for abt in sorted(df["Abteilung"].unique())],
-                                value=None,
+                                options=[{"label": "Produktion", "value": "Produktion"}],
+                                value="Produktion",
                                 id="filter-abteilung",
-                                placeholder="Alle Abteilungen"
-                            ),
+                                style={"display": "none"}  # Versteckt im Layout
+                            ),  
+
                             html.Label("Kostenart auswählen:"),
                             dcc.Dropdown(
                                 options=[{"label": ka, "value": ka} for ka in sorted(df["Kostenart"].unique())],

@@ -193,6 +193,9 @@ default_figure = get_trend_fig()
 
 def gen_layout():
     global default_figure
+    global total_ist
+    global total_budget
+    global abweichung
     if user_data["is_logged_in"]:
         match user_data["username"]:
             case "Daniela.Düsentrieb@Firma.p":
@@ -209,6 +212,11 @@ def gen_layout():
                 layout_obj = layout.BetrachterLayout(user_data)
             case "Franziska.Fachabteilung@Firma.p":
                 default_figure = get_trend_fig(abteilung="Produktion")
+                #total_ist für currrent year
+                df_year = df[df["Jahr"] == current_year]
+                total_ist    = df_year[df_year["Abteilung"] == "Produktion"]["Ist"].sum()
+                total_budget = df_year[df_year["Abteilung"] == "Produktion"]["Budget"].sum()
+                abweichung =  total_budget - total_ist
                 layout_obj = layout.BetrachterLayout(user_data)
             case "Sigrid.Systemadmin@Firma.p":
                 layout_obj = layout.BasicLayout(user_data)
