@@ -210,7 +210,8 @@ def get_trend_fig(abteilung=None, kostenart=None, start=None, end=None):
             "Ist": "sum",
             "Monatsbudget": "first"
         }).reset_index()
-
+        if abteilung is None and kostenart is None:
+            df_output["Monatsbudget"] = df_output["Monatsbudget"]*9
 
         #print(df_output.head(50))
     except Exception as e:
