@@ -108,7 +108,7 @@ conn.close()
 
 
 # monthly plan/actual
-df_kpi_aggregation = df.groupby(["Abteilung", "Kategorie", "Monat", "Jahr"]).agg(
+df_kpi_aggregation = df.groupby(["Abteilung", "Kostenart", "Monat", "Jahr"]).agg(
     ist_summe=("Ist", "sum"),
     budget_summe=("Budget", "first")
 ).reset_index()
@@ -147,7 +147,7 @@ percent_change_abweichung = (abweichung / abweichung_last_year) * 100
 # ye olde kostenart_fig, now with new dataset :3
 kostenart_fig = px.bar(
     df_kpi_aggregation[df_kpi_aggregation["Jahr"] == current_year],
-    x="Kategorie",
+    x="Kostenart",
     y="ist_summe",
     color="Abteilung",
     barmode="group",
@@ -203,19 +203,21 @@ def get_trend_fig(abteilung=None, kostenart=None, start=None, end=None):
     return fig
 
 
-def get_kostenart_fig(abteilung=None, jahr=None):
+def get_kostenart_fig(abteilung=None, kostenart=None, jahr=None):
     global df_kpi_aggregation
     df_filtered = df_kpi_aggregation.copy(deep=True)
 
     if abteilung != None:
         df_filtered = df_filtered[df_filtered["Abteilung"] == abteilung]
+    if kostenart != None:
+        df_filtered = df_filtered[df_filtered["Kostenart"] == kostenart]
     if jahr != None:
         df_filtered = df_filtered[df_filtered["Jahr"] == jahr]
     
 
     fig = px.bar(
         df_filtered,
-        x="Kategorie",
+        x="Kostenart",
         y="ist_summe",
         color="Abteilung",
         barmode="group",
@@ -226,7 +228,7 @@ def get_kostenart_fig(abteilung=None, jahr=None):
 
 
 default_figure = get_trend_fig()
-kostenart_fig = get_kostenart_fig(abteilung=None, jahr=current_year)
+kostenart_fig = get_kostenart_fig(abteilung=None, kostenart=None, jahr=current_year)
 
 
 ##################################
@@ -306,6 +308,13 @@ app.callback(
         Input("filter-zeitraum", "start_date"),
         Input("filter-zeitraum", "end_date")
     )(lambda abteilung, kostenart, start, end: get_trend_fig(abteilung, kostenart, start, end))
+
+app.callback(
+        Output("kostenart_fig", "figure"),
+        Input("filter-abteilung", "value"),
+        Input("filter-kostenart", "value"),
+        Input("filter-zeitraum", "end_date")
+    )(lambda abteilung, kostenart, end: get_kostenart_fig(abteilung, kostenart, pd.to_datetime(end).year if end else None))
 
 
 if __name__ == "__main__":

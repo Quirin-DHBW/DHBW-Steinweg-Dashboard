@@ -99,7 +99,7 @@ class BasicLayout:
                         ], 
                         style={"marginBottom": "20px", "width": "60%"}),
 
-                        dcc.Graph(figure=kostenart_fig)
+                        dcc.Graph(id="kostenart_fig", figure=kostenart_fig)
                     ])
 
         return html_layout
@@ -195,7 +195,7 @@ class BetrachterLayout(BasicLayout):
                         ], 
                         style={"marginBottom": "20px", "width": "60%"}),
 
-                        dcc.Graph(figure=kostenart_fig)
+                        dcc.Graph(id="kostenart_fig", figure=kostenart_fig)
                     ])
         
             
@@ -310,7 +310,7 @@ class BetrachterLayout(BasicLayout):
                           "marginBottom": "30px"
                         }),
 
-                        dcc.Graph(figure=kostenart_fig)
+                        dcc.Graph(id="kostenart_fig", figure=kostenart_fig)
                     ])
         return html_layout
     
