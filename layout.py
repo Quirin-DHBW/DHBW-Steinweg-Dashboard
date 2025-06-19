@@ -188,9 +188,19 @@ class BetrachterLayout(BasicLayout):
                 ist_label="Abteilungskosten",
                 trend_headline="Kostenverlauf ihrer Abteilung",
                 kostenart_list=["Ausgangsfrachten", "Verpackungsmaterial", "Transportversicherungen", "Reparaturen Betriebsausstattung"]
-                   
             )
-        return super().layout_function(df, totals_container, default_figure, kostenart_fig)
+        elif user_name == "Sven.Schau@Firma.p":
+            return super().layout_function(
+                df, totals_container, default_figure, kostenart_fig,
+                headline="Dashboard für Facility Management",
+                abteilung_dropdown_visible=False,
+                abteilung_default_value="Facility Management",
+                ist_label="Abteilungskosten",
+                trend_headline="Kostenverlauf ihrer Abteilung",
+                kostenart_list=["Miete (unbewegliche Wirtschaftsgüter)", "Heizung", "Gas, Strom, Wasser", "Reinigung", "Reparaturen Bauten", "Reparaturen Betriebsausstattung", "Sonstige Reparaturen"]
+            )
+        else:
+            return super().layout_function(df, totals_container, default_figure, kostenart_fig)
 
 
 class PowerUserLayout(BasicLayout):
