@@ -23,11 +23,9 @@ USER_CONFIGURATION_SELECTION = {
     "Daniela.Düsentrieb@Firma.p" : "Entwickleransicht",
     "Sven.Schau@Firma.p" : "Betrachteransicht",
     "Ludwig.Leistung@Firma.p" : "Poweruseransicht",
-    "Connie.Controlling@Fimrma.p" : "Poweruseransicht",
     "Gertholt.Geschäftsführung@Firma.p" : "Poweruseransicht",
     "Andreas.Auditor@Firma.p" : "Betrachteransicht",
-    "Franziska.Fachabteilung@Firma.p" : "Betrachteransicht",
-    "Sigrid.Systemadmin@Firma.p" : "Entwickleransicht",
+    "Potty@Produktion.p" : "Betrachteransicht",
 }
 
 user_data = {
@@ -211,7 +209,11 @@ def get_trend_fig(abteilung=None, kostenart=None, start=None, end=None):
             "Monatsbudget": "first"
         }).reset_index()
         if abteilung is None and kostenart is None:
-            df_output["Monatsbudget"] = df_output["Monatsbudget"]*9
+            jahre = df_output["Monat"].dt.year.unique()
+            budgets = df[df["Jahr"].isin(jahre)].drop_duplicates(subset=["Abteilung", "Jahr"])[["Jahr", "Budget"]]
+            jahresbudgets = budgets.groupby("Jahr")["Budget"].sum().to_dict()
+
+            df_output["Monatsbudget"] = df_output["Monat"].dt.year.map(lambda jahr: jahresbudgets.get(jahr, 0) / 12)
 
         #print(df_output.head(50))
     except Exception as e:
@@ -272,22 +274,22 @@ def gen_layout():
                 layout_obj = layout.BasicLayout(user_data)
             case "Sven.Schau@Firma.p":
                 layout_obj = layout.BetrachterLayout(user_data)
+                default_figure = get_trend_fig(abteilung="Facility Management")
+                #total_ist für currrent year
+                totals_container = get_total_kpis(df, current_year=current_year, abteilung="Facility Management")
+                kostenart_fig = get_kostenart_fig(abteilung="Facility Management", jahr=current_year)
             case "Ludwig.Leistung@Firma.p":
-                layout_obj = layout.PowerUserLayout(user_data)
-            case "Connie.Controlling@Firma.p":
                 layout_obj = layout.PowerUserLayout(user_data)
             case "Gertholt.Geschäftsführung@Firma.p":
                 layout_obj = layout.PowerUserLayout(user_data)
             case "Andreas.Auditor@Firma.p":
                 layout_obj = layout.BetrachterLayout(user_data)
-            case "Franziska.Fachabteilung@Firma.p":
+            case "Potty.Produktion@Firma.p":
                 layout_obj = layout.BetrachterLayout(user_data)
                 default_figure = get_trend_fig(abteilung="Produktion")
                 #total_ist für currrent year
                 totals_container = get_total_kpis(df, current_year=current_year, abteilung="Produktion")
                 kostenart_fig = get_kostenart_fig(abteilung="Produktion", jahr=current_year)
-            case "Sigrid.Systemadmin@Firma.p":
-                layout_obj = layout.BasicLayout(user_data)
             case _:
                 layout_obj = layout.BasicLayout(user_data)
 
