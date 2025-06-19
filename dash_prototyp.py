@@ -337,7 +337,10 @@ app.callback(
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    if user_data["username"] == "Daniela.Düsentrieb@Firma.p":
+        app.run(debug=True)
+    else:
+        app.run(debug=False)
 
 # go to 
 # http://127.0.0.1:8050/
