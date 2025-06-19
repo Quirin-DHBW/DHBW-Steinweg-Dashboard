@@ -203,7 +203,29 @@ def get_trend_fig(abteilung=None, kostenart=None, start=None, end=None):
     return fig
 
 
+def get_kostenart_fig(abteilung=None, jahr=None):
+    global df_kpi_aggregation
+    df_filtered = df_kpi_aggregation.copy(deep=True)
+
+    if abteilung != None:
+        df_filtered = df_filtered[df_filtered["Abteilung"] == abteilung]
+    if jahr != None:
+        df_filtered = df_filtered[df_filtered["Jahr"] == jahr]
+    
+
+    fig = px.bar(
+        df_filtered,
+        x="Kategorie",
+        y="ist_summe",
+        barmode="group",
+        title=f"Kostenarten {'für ' + abteilung if abteilung != None else ''} (Ist-Werte)"
+    )
+
+    return fig
+
+
 default_figure = get_trend_fig()
+kostenart_fig = get_kostenart_fig(abteilung=None, jahr=current_year)
 
 
 ##################################
@@ -238,16 +260,7 @@ def gen_layout():
                 total_budget = df_year[df_year["Abteilung"] == "Produktion"].drop_duplicates(subset=["Abteilung", "Jahr"])["Budget"].sum()
                 abweichung =  total_budget - total_ist
                 layout_obj = layout.BetrachterLayout(user_data)
-                kostenart_fig = px.bar(
-                    df_kpi_aggregation[
-                    (df_kpi_aggregation["Jahr"] == current_year) &
-                    (df_kpi_aggregation["Abteilung"] == "Produktion")
-                    ],
-                    x="Kategorie",
-                    y="ist_summe",
-                    barmode="group",
-                    title="Kostenarten für Produktion (Ist-Werte)"
-                )
+                kostenart_fig = get_kostenart_fig(abteilung="Produktion", jahr=current_year)
             case "Sigrid.Systemadmin@Firma.p":
                 layout_obj = layout.BasicLayout(user_data)
             case _:
