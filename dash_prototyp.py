@@ -143,7 +143,7 @@ def get_total_kpis(df, current_year=2024, abteilung=None):
 
     total_ist_last_year = df_last_year["Ist"].sum()
     total_budget_last_year = df_last_year.drop_duplicates(subset=["Abteilung", "Jahr"])["Budget"].sum()
-    abweichung_last_year = total_budget - total_ist
+    abweichung_last_year = total_budget_last_year - total_ist_last_year
     abweichung_farbe_last_year = "green" if abweichung >= 0 else "red"
 
     percent_change_ist = (total_ist / total_ist_last_year) * 100
