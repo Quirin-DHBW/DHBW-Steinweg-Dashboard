@@ -4,6 +4,7 @@ from dash import Dash, html, dcc
 from dash.dependencies import Input, Output
 
 
+
 class BasicLayout:
     def __init__(self, user_data):
         self.user_data = user_data
@@ -13,6 +14,35 @@ class BasicLayout:
                         totals_container,
                         default_figure,
                         kostenart_fig,
+                        kostenart_list=[
+                            "Ausgangsfrachten",
+                            "Bürobedarf",
+                            "Fahrtkosten",
+                            "Fahrzeug-Reparaturen",
+                            "Fahrrzeug-Versicherungen",
+                            "Fortbildungskosten",
+                            "Gas, Strom, Wasser",
+                            "Gewerbesteuer",
+                            "Heizung",
+                            "Internetkosten",
+                            "Kfz-Steuer",
+                            "Laufende Fahrzeug-Betriebskosten",
+                            "Miete (unbewegliche Wirtschaftsgüter)",
+                            "Reinigung",
+                            "Reisekosten Arbeitnehmer",
+                            "Reparaturen Bauten",
+                            "Reparaturen Betriebsausstattung",
+                            "Sonstige Betriebssteuern",
+                            "Sonstige Reparaturen",
+                            "Transportversicherungen",
+                            "Verkaufsprovisionen",
+                            "Verpackungsmaterial",
+                            "Verpflegunsmehraufwand",
+                            "Versicherungen",
+                            "Versicherungen für Gebäude",
+                            "Wartung Hard-/Software",
+                            "Übernachtungsaufwand"
+                            ],
                         headline="Dashboard zur Kostenüberwachung",
                         welcome_message=None,
                         abteilung_dropdown_visible=True,
@@ -106,7 +136,7 @@ class BasicLayout:
                 html.Div([
                     html.Label(kostenart_label, style={"marginBottom": "5px", "fontWeight": "bold"}),
                     dcc.Dropdown(
-                        options=[{"label": ka, "value": ka} for ka in sorted(df["Kostenart"].unique())],
+                        options=[{"label": ka, "value": ka} for ka in kostenart_list],
                         value=None,
                         id="filter-kostenart",
                         placeholder="Alle Kostenarten",
@@ -151,12 +181,14 @@ class BetrachterLayout(BasicLayout):
             )
         elif user_name == "Franziska.Fachabteilung@Firma.p":
             return super().layout_function(
-                df, totals_container, default_figure, kostenart_fig,
+                df, totals_container, default_figure, kostenart_fig, 
                 headline="Dashboard für Produktionsabteilung",
                 abteilung_dropdown_visible=False,
                 abteilung_default_value="Produktion",
                 ist_label="Abteilungskosten",
-                trend_headline="Kostenverlauf ihrer Abteilung"
+                trend_headline="Kostenverlauf ihrer Abteilung",
+                kostenart_list=["Ausgangsfrachten", "Verpackungsmaterial", "Transportversicherungen", "Reparaturen Betriebsausstattung"]
+                   
             )
         return super().layout_function(df, totals_container, default_figure, kostenart_fig)
 
