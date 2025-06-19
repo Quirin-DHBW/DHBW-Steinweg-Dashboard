@@ -29,7 +29,7 @@ def gen_random_entries(account_structure, years, min_entries, max_entries):
                             for _ in range(random.randint(min_entries, max_entries)):
                                 day = random.randint(1, 28)
                                 date = datetime.date(year, month, day)
-                                amount = round(random.uniform(100, 3000), 2)
+                                amount = round(random.uniform(100, 2500), 2)
 
                                 cursor.execute("""
                                     INSERT INTO buchungssaetze (konto, fachbereich, bezeichnung, kategorie, buchungsdatum, betrag)
@@ -53,7 +53,7 @@ def gen_random_entries(account_structure, years, min_entries, max_entries):
             cursor.execute("""
                 INSERT INTO abteilungen (abteilung, budget, year)
                 VALUES (?, ?, ?)
-            """, (abteilung, random.randint(100000, 500000), year)) 
+            """, (abteilung, random.randint(200000, 500000), year)) 
 
 
 conn = sqlite3.connect("data/einzelkonten.db")
