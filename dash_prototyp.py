@@ -25,7 +25,7 @@ USER_CONFIGURATION_SELECTION = {
     "Ludwig.Leistung@Firma.p" : "Poweruseransicht",
     "Gertholt.Geschäftsführung@Firma.p" : "Poweruseransicht",
     "Andreas.Auditor@Firma.p" : "Betrachteransicht",
-    "Potty@Produktion.p" : "Betrachteransicht",
+    "Potty.Produktion@Firma.p" : "Betrachteransicht",
 }
 
 user_data = {
