@@ -179,7 +179,7 @@ class BetrachterLayout(BasicLayout):
                 headline="Dashboard zur für die Auditoren",
                 trend_headline="Trendanalyse – Entwicklung der Gesamtkosten"
             )
-        elif user_name == "Franziska.Fachabteilung@Firma.p":
+        elif user_name == "Potty.Produktion@Firma.p":
             return super().layout_function(
                 df, totals_container, default_figure, kostenart_fig, 
                 headline="Dashboard für Produktionsabteilung",
