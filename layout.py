@@ -12,7 +12,17 @@ class BasicLayout:
                         df,
                         totals_container,
                         default_figure,
-                        kostenart_fig):            
+                        kostenart_fig,
+                        headline="Dashboard zur Kostenüberwachung",
+                        welcome_message=None,
+                        abteilung_dropdown_visible=True,
+                        abteilung_default_value=None,
+                        abteilung_dropdown_options=None,
+                        kostenart_label="Kostenart auswählen:",
+                        ist_label="Gesamtkosten",
+                        budget_label="Gesamtbudget",
+                        abweichung_label="Abweichung",
+                        trend_headline="Trendanalyse – Entwicklung der Gesamtkosten"):        
         html_layout = html.Div([
                         html.H1("Dashboard zur Kostenüberwachung"),
                         html.H2(f"Willkommen, {self.user_data['username']}!"),
@@ -71,10 +81,9 @@ class BasicLayout:
                             "alignItems": "center"
                         }),
 
-                        html.H2("Trendanalyse – Entwicklung der Gesamtkosten"),
-                        dcc.Graph(id="trend-diagramm", figure=default_figure),    
-
-                        html.Hr(),
+                    html.H2(trend_headline),
+                    dcc.Graph(id="trend-diagramm", figure=default_figure),    
+                    html.Hr(),
 
                         html.Div([
                             html.Label("Abteilung auswählen:"),
