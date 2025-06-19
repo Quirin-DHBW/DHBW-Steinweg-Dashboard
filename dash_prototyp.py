@@ -82,7 +82,7 @@ SELECT
     b.fachbereich as Abteilung,
     a.abteilung,
     a.budget as Budget,
-    a.year as Jahr,
+    a.year,
     b.bezeichnung as Kostenart,
     b.kategorie as Kategorie,
     b.buchungsdatum,
@@ -93,6 +93,7 @@ JOIN
     abteilungen a 
 ON 
     b.fachbereich = a.abteilung
+    AND strftime('%Y', b.buchungsdatum) = CAST(a.year AS TEXT)
 """
 
 conn = sqlite3.connect("data/einzelkonten.db")
@@ -100,8 +101,11 @@ conn = sqlite3.connect("data/einzelkonten.db")
 df = pd.read_sql_query(query, conn)
 df["buchungsdatum"] = pd.to_datetime(df["buchungsdatum"])
 df["Monat"] = df["buchungsdatum"].dt.to_period("M").dt.to_timestamp()
+df["Jahr"] = df["buchungsdatum"].dt.year
+df["Monatsbudget"] = df["Budget"] / 12
 
 conn.close()
+
 
 # monthly plan/actual
 df_kpi_aggregation = df.groupby(["Abteilung", "Kategorie", "Monat", "Jahr"]).agg(
@@ -117,7 +121,7 @@ df_kpi_diff["budgetüberschreitung"] = df_kpi_diff["abweichung"] > 0
 # raw, for drilldowns
 df_accounts = df[[
     "buchungs_id", "Abteilung", "Einzelkontonummer", "Kostenart",
-    "Kategorie", "buchungsdatum", "Monat", "Ist", "Budget", "Jahr"
+    "Kategorie", "buchungsdatum", "Monat", "Ist", "Monatsbudget", "Budget", "Jahr"
 ]]
 
 # === total KPIs (adjustable year) - for initial functionality ===
@@ -176,7 +180,11 @@ def get_trend_fig(abteilung=None, kostenart=None, start=None, end=None):
             (df_filtered["Monat"] <= pd.to_datetime(end))
         ]
 
-        df_output = df_filtered.groupby("Monat")[["Ist", "Budget"]].sum().reset_index()
+        df_output = df_filtered.groupby("Monat").agg({
+            "Ist": "sum",
+            "Monatsbudget": "first"
+        }).reset_index()
+
 
         #print(df_output.head(50))
     except Exception as e:
@@ -185,7 +193,7 @@ def get_trend_fig(abteilung=None, kostenart=None, start=None, end=None):
 
     fig = px.line(df_output,
                   x="Monat",
-                  y=["Ist", "Budget"],
+                  y=["Ist", "Monatsbudget"],
                   markers=True,
                   title="Kostenentwicklung über Zeit",
                   labels={"value": "Euro", "variable": "Kategorie"})
