@@ -55,7 +55,7 @@ class BasicLayout:
                         trend_headline="Trendanalyse – Entwicklung der Gesamtkosten"):
 
         if welcome_message is None:
-            welcome_message = f"Willkommen, {self.user_data['username']}!"
+            welcome_message = f"Willkommen, {self.user_data['username'].split('.')[0]}!"
         if abteilung_dropdown_options is None:
             abteilung_dropdown_options = [{"label": abt, "value": abt} for abt in sorted(df["Abteilung"].unique())]
 
