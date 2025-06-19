@@ -217,6 +217,7 @@ def get_kostenart_fig(abteilung=None, jahr=None):
         df_filtered,
         x="Kategorie",
         y="ist_summe",
+        color="Abteilung",
         barmode="group",
         title=f"Kostenarten{' für ' + abteilung if abteilung != None else ''} (Ist-Werte)"
     )
