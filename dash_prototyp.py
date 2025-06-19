@@ -124,24 +124,50 @@ df_accounts = df[[
     "Kategorie", "buchungsdatum", "Monat", "Ist", "Monatsbudget", "Budget", "Jahr"
 ]]
 
-# === total KPIs (adjustable year) - for initial functionality ===
 current_year = 2024
-df_year = df[df["Jahr"] == current_year]
-df_last_year = df[df["Jahr"] == current_year - 1]
 
-total_ist = df_year["Ist"].sum()
-total_budget = df_year.drop_duplicates(subset=["Abteilung", "Jahr"])["Budget"].sum()
-abweichung = total_budget - total_ist
-abweichung_farbe = "green" if abweichung >= 0 else "red"
+# === total KPIs (adjustable year) - for initial functionality ===
+def get_total_kpis(df, current_year=2024, abteilung=None):
+    df = df.copy(deep=True)
 
-total_ist_last_year = df_last_year["Ist"].sum()
-total_budget_last_year = df_last_year.drop_duplicates(subset=["Abteilung", "Jahr"])["Budget"].sum()
-abweichung_last_year = total_budget - total_ist
-abweichung_farbe_last_year = "green" if abweichung >= 0 else "red"
+    if abteilung is not None:
+        df = df[df["Abteilung"] == abteilung]
 
-percent_change_ist = (total_ist / total_ist_last_year) * 100
-percent_change_budget = (total_budget / total_budget_last_year) * 100
-percent_change_abweichung = (abweichung / abweichung_last_year) * 100
+    df_year = df[df["Jahr"] == current_year]
+    df_last_year = df[df["Jahr"] == current_year - 1]
+
+    total_ist = df_year["Ist"].sum()
+    total_budget = df_year.drop_duplicates(subset=["Abteilung", "Jahr"])["Budget"].sum()
+    abweichung = total_budget - total_ist
+    abweichung_farbe = "green" if abweichung >= 0 else "red"
+
+    total_ist_last_year = df_last_year["Ist"].sum()
+    total_budget_last_year = df_last_year.drop_duplicates(subset=["Abteilung", "Jahr"])["Budget"].sum()
+    abweichung_last_year = total_budget - total_ist
+    abweichung_farbe_last_year = "green" if abweichung >= 0 else "red"
+
+    percent_change_ist = (total_ist / total_ist_last_year) * 100
+    percent_change_budget = (total_budget / total_budget_last_year) * 100
+    percent_change_abweichung = (abweichung / abweichung_last_year) * 100
+
+    totals_container = {
+        "total_ist": total_ist,
+        "total_budget": total_budget,
+        "abweichung": abweichung,
+        "abweichung_farbe": abweichung_farbe,
+        "total_ist_last_year": total_ist_last_year,
+        "total_budget_last_year": total_budget_last_year,
+        "abweichung_last_year": abweichung_last_year,
+        "abweichung_farbe_last_year": abweichung_farbe_last_year,
+        "percent_change_ist": percent_change_ist,
+        "percent_change_budget": percent_change_budget,
+        "percent_change_abweichung": percent_change_abweichung
+    }
+
+    return totals_container
+
+
+totals_container = get_total_kpis(df, current_year=current_year)
 
 
 # ye olde kostenart_fig, now with new dataset :3
@@ -237,9 +263,7 @@ kostenart_fig = get_kostenart_fig(abteilung=None, kostenart=None, jahr=current_y
 
 def gen_layout():
     global default_figure
-    global total_ist
-    global total_budget
-    global abweichung
+    global totals_container
     global kostenart_fig
     if user_data["is_logged_in"]:
         match user_data["username"]:
@@ -256,13 +280,10 @@ def gen_layout():
             case "Andreas.Auditor@Firma.p":
                 layout_obj = layout.BetrachterLayout(user_data)
             case "Franziska.Fachabteilung@Firma.p":
+                layout_obj = layout.BetrachterLayout(user_data)
                 default_figure = get_trend_fig(abteilung="Produktion")
                 #total_ist für currrent year
-                df_year = df[df["Jahr"] == current_year]
-                total_ist    = df_year[df_year["Abteilung"] == "Produktion"]["Ist"].sum()
-                total_budget = df_year[df_year["Abteilung"] == "Produktion"].drop_duplicates(subset=["Abteilung", "Jahr"])["Budget"].sum()
-                abweichung =  total_budget - total_ist
-                layout_obj = layout.BetrachterLayout(user_data)
+                totals_container = get_total_kpis(df, current_year=current_year, abteilung="Produktion")
                 kostenart_fig = get_kostenart_fig(abteilung="Produktion", jahr=current_year)
             case "Sigrid.Systemadmin@Firma.p":
                 layout_obj = layout.BasicLayout(user_data)
@@ -273,22 +294,16 @@ def gen_layout():
         print(layout_obj.user_data)
 
         custom_layout = layout_obj.layout_function(df,
-                                                total_ist,
-                                                total_budget,
-                                                abweichung,
-                                                abweichung_farbe,
-                                                default_figure,
-                                                kostenart_fig)
+                                                   totals_container,
+                                                   default_figure,
+                                                   kostenart_fig)
         
         return custom_layout
     else:
         print("No user data found, using default layout")
         custom_layout = layout.BasicLayout(user_data).layout_function(
             df,
-            total_ist,
-            total_budget,
-            abweichung,
-            abweichung_farbe,
+            totals_container,
             default_figure,
             kostenart_fig
         )

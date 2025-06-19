@@ -10,10 +10,7 @@ class BasicLayout:
 
     def layout_function(self, 
                         df,
-                        total_ist,
-                        total_budget,
-                        abweichung,
-                        abweichung_farbe,
+                        totals_container,
                         default_figure,
                         kostenart_fig):            
         html_layout = html.Div([
@@ -23,7 +20,8 @@ class BasicLayout:
                         html.Div([
                             html.Div([
                                 html.H3("Gesamtkosten", style={"textAlign": "center"}),
-                                html.P(f"{total_ist:,.2f} €", style={"textAlign": "center", "margin": "0"})
+                                html.P(f"{totals_container['total_ist']:,.2f} €", style={"textAlign": "center", "margin": "0"}),
+                                html.P(f"Letztes Jahr: {totals_container['total_ist_last_year']:,.2f} € ({totals_container['percent_change_ist']:,.1f}%)", style={"textAlign": "center", "margin": "0"})
                             ], style={
                                 "padding": "10px",
                                 "border": "1px solid #ccc",
@@ -35,7 +33,8 @@ class BasicLayout:
                             
                             html.Div([
                                 html.H3("Gesamtbudget", style={"textAlign": "center"}),
-                                html.P(f"{total_budget:,.2f} €", style={"textAlign": "center", "margin": "0"})
+                                html.P(f"{totals_container['total_budget']:,.2f} €", style={"textAlign": "center", "margin": "0"}),
+                                html.P(f"Letztes Jahr: {totals_container['total_budget_last_year']:,.2f} € ({totals_container['percent_change_budget']:,.1f}%)", style={"textAlign": "center", "margin": "0"})
                             ], style={
                                 "padding": "10px",
                                 "border": "1px solid #ccc",
@@ -47,9 +46,14 @@ class BasicLayout:
                             
                             html.Div([
                                 html.H3("Abweichung", style={"textAlign": "center"}),
-                                html.P(f"{abweichung:,.2f} €", style={
+                                html.P(f"{totals_container['abweichung']:,.2f} €", style={
                                     "textAlign": "center",
-                                    "color": abweichung_farbe,
+                                    "color": totals_container["abweichung_farbe"],
+                                    "margin": "0"
+                                }),
+                                html.P(f"Letztes Jahr: {totals_container['abweichung_last_year']:,.2f} € ({totals_container['percent_change_abweichung']:,.1f}%)", style={
+                                    "textAlign": "center",
+                                    "color": totals_container["abweichung_farbe_last_year"],
                                     "margin": "0"
                                 })
                             ], style={
@@ -109,7 +113,11 @@ class BetrachterLayout(BasicLayout):
     def __init__(self, user_data):
         super().__init__(user_data)
 
-    def layout_function(self, df, total_ist, total_budget, abweichung, abweichung_farbe, default_figure, kostenart_fig):
+    def layout_function(self, 
+                        df,
+                        totals_container,
+                        default_figure,
+                        kostenart_fig):
         if self.user_data["username"] == "Andreas.Auditor@Firma.p":
             html_layout= html.Div([
                         html.H1("Dashboard zur für die Auditoren"),
@@ -118,7 +126,8 @@ class BetrachterLayout(BasicLayout):
                         html.Div([
                             html.Div([
                                 html.H3("Gesamtkosten", style={"textAlign": "center"}),
-                                html.P(f"{total_ist:,.2f} €", style={"textAlign": "center", "margin": "0"})
+                                html.P(f"{totals_container['total_ist']:,.2f} €", style={"textAlign": "center", "margin": "0"}),
+                                html.P(f"Letztes Jahr: {totals_container['total_ist_last_year']:,.2f} € ({totals_container['percent_change_ist']:,.1f}%)", style={"textAlign": "center", "margin": "0"})
                             ], style={
                                 "padding": "10px",
                                 "border": "1px solid #ccc",
@@ -130,7 +139,8 @@ class BetrachterLayout(BasicLayout):
                             
                             html.Div([
                                 html.H3("Gesamtbudget", style={"textAlign": "center"}),
-                                html.P(f"{total_budget:,.2f} €", style={"textAlign": "center", "margin": "0"})
+                                html.P(f"{totals_container['total_budget']:,.2f} €", style={"textAlign": "center", "margin": "0"}),
+                                html.P(f"Letztes Jahr: {totals_container['total_budget_last_year']:,.2f} € ({totals_container['percent_change_budget']:,.1f}%)", style={"textAlign": "center", "margin": "0"})
                             ], style={
                                 "padding": "10px",
                                 "border": "1px solid #ccc",
@@ -142,9 +152,14 @@ class BetrachterLayout(BasicLayout):
                             
                             html.Div([
                                 html.H3("Abweichung", style={"textAlign": "center"}),
-                                html.P(f"{abweichung:,.2f} €", style={
+                                html.P(f"{totals_container['abweichung']:,.2f} €", style={
                                     "textAlign": "center",
-                                    "color": abweichung_farbe,
+                                    "color": totals_container["abweichung_farbe"],
+                                    "margin": "0"
+                                }),
+                                html.P(f"Letztes Jahr: {totals_container['abweichung_last_year']:,.2f} € ({totals_container['percent_change_abweichung']:,.1f}%)", style={
+                                    "textAlign": "center",
+                                    "color": totals_container["abweichung_farbe_last_year"],
                                     "margin": "0"
                                 })
                             ], style={
@@ -210,7 +225,8 @@ class BetrachterLayout(BasicLayout):
                          html.Div([
                             html.Div([
                                 html.H3("Abteilungskosten", style={"textAlign": "center",}),
-                                html.P(f"{total_ist:,.2f} €", style={"textAlign": "center", "margin": "0"})
+                                html.P(f"{totals_container['total_ist']:,.2f} €", style={"textAlign": "center", "margin": "0"}),
+                                html.P(f"Letztes Jahr: {totals_container['total_ist_last_year']:,.2f} € ({totals_container['percent_change_ist']:,.1f}%)", style={"textAlign": "center", "margin": "0"})
                             ], style={
                                 "padding": "10px",
                                 "border": "1px solid #ccc",
@@ -223,7 +239,8 @@ class BetrachterLayout(BasicLayout):
                             
                             html.Div([
                                 html.H3("Budget", style={"textAlign": "center"}),
-                                html.P(f"{total_budget:,.2f} €", style={"textAlign": "center", "margin": "0"})
+                                html.P(f"{totals_container['total_budget']:,.2f} €", style={"textAlign": "center", "margin": "0"}),
+                                html.P(f"Letztes Jahr: {totals_container['total_budget_last_year']:,.2f} € ({totals_container['percent_change_budget']:,.1f}%)", style={"textAlign": "center", "margin": "0"})
                             ], style={
                                 "padding": "10px",
                                 "border": "1px solid #ccc",
@@ -236,9 +253,14 @@ class BetrachterLayout(BasicLayout):
                             
                             html.Div([
                                 html.H3("Abweichung", style={"textAlign": "center"}),
-                                html.P(f"{abweichung:,.2f} €", style={
+                                html.P(f"{totals_container['abweichung']:,.2f} €", style={
                                     "textAlign": "center",
-                                    "color": abweichung_farbe,
+                                    "color": totals_container["abweichung_farbe"],
+                                    "margin": "0"
+                                }),
+                                html.P(f"Letztes Jahr: {totals_container['abweichung_last_year']:,.2f} € ({totals_container['percent_change_abweichung']:,.1f}%)", style={
+                                    "textAlign": "center",
+                                    "color": totals_container["abweichung_farbe_last_year"],
                                     "margin": "0"
                                 })
                             ], style={
@@ -319,7 +341,14 @@ class PowerUserLayout(BasicLayout):
     def __init__(self, user_data):
         super().__init__(user_data)
 
-    def layout_function(self, df, total_ist, total_budget, abweichung, abweichung_farbe, default_figure, kostenart_fig):
-        return self.layout_function(df, total_ist, total_budget, abweichung, abweichung_farbe, default_figure, kostenart_fig)
+    def layout_function(self, 
+                        df,
+                        totals_container,
+                        default_figure,
+                        kostenart_fig):
+        return self.layout_function(df,
+                                    totals_container,
+                                    default_figure,
+                                    kostenart_fig)
     
     
