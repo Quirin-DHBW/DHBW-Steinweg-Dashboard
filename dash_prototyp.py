@@ -215,7 +215,7 @@ def gen_layout():
                 #total_ist für currrent year
                 df_year = df[df["Jahr"] == current_year]
                 total_ist    = df_year[df_year["Abteilung"] == "Produktion"]["Ist"].sum()
-                total_budget = df_year[df_year["Abteilung"] == "Produktion"]["Budget"].sum()
+                total_budget = df_year[df_year["Abteilung"] == "Produktion"].drop_duplicates(subset=["Abteilung", "Jahr"])["Budget"].sum()
                 abweichung =  total_budget - total_ist
                 layout_obj = layout.BetrachterLayout(user_data)
             case "Sigrid.Systemadmin@Firma.p":
