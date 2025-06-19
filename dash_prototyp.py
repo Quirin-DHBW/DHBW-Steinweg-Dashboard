@@ -123,11 +123,22 @@ df_accounts = df[[
 # === total KPIs (adjustable year) - for initial functionality ===
 current_year = 2024
 df_year = df[df["Jahr"] == current_year]
+df_last_year = df[df["Jahr"] == current_year - 1]
 
 total_ist = df_year["Ist"].sum()
 total_budget = df_year.drop_duplicates(subset=["Abteilung", "Jahr"])["Budget"].sum()
 abweichung = total_budget - total_ist
 abweichung_farbe = "green" if abweichung >= 0 else "red"
+
+total_ist_last_year = df_last_year["Ist"].sum()
+total_budget_last_year = df_last_year.drop_duplicates(subset=["Abteilung", "Jahr"])["Budget"].sum()
+abweichung_last_year = total_budget - total_ist
+abweichung_farbe_last_year = "green" if abweichung >= 0 else "red"
+
+percent_change_ist = (total_ist / total_ist_last_year) * 100
+percent_change_budget = (total_budget / total_budget_last_year) * 100
+percent_change_abweichung = (abweichung / abweichung_last_year) * 100
+
 
 # ye olde kostenart_fig, now with new dataset :3
 kostenart_fig = px.bar(
