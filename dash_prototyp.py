@@ -268,6 +268,7 @@ def gen_layout():
     global default_figure
     global totals_container
     global kostenart_fig
+    global kostenart_list
     if user_data["is_logged_in"]:
         match user_data["username"]:
             case "Daniela.Düsentrieb@Firma.p":
