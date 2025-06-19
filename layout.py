@@ -20,7 +20,6 @@ class BasicLayout:
                         html.H1("Dashboard zur Kostenüberwachung"),
                         html.H2(f"Willkommen, {self.user_data['username']}!"),
                         
-                        # Trendanalyse
                         html.Div([
                             html.Div([
                                 html.H3("Gesamtkosten", style={"textAlign": "center"}),
@@ -67,7 +66,6 @@ class BasicLayout:
                             "justifyContent": "space-between",
                             "alignItems": "center"
                         }),
-                        # Hier wird das Diagramm für die Gesamtkosten angezeigt
 
                         html.H2("Trendanalyse – Entwicklung der Gesamtkosten"),
                         dcc.Graph(id="trend-diagramm", figure=default_figure),    
@@ -119,20 +117,51 @@ class BetrachterLayout(BasicLayout):
                         
                         html.Div([
                             html.Div([
-                                html.H3("Gesamtkosten"),
-                                html.P(f"{total_ist:,.2f} €")
-                            ], style={"padding": "10px", "border": "1px solid #ccc", "width": "25%"}),
+                                html.H3("Gesamtkosten", style={"textAlign": "center"}),
+                                html.P(f"{total_ist:,.2f} €", style={"textAlign": "center", "margin": "0"})
+                            ], style={
+                                "padding": "10px",
+                                "border": "1px solid #ccc",
+                                "flex": "1",
+                                "display": "flex",
+                                "flexDirection": "column",
+                                "justifyContent": "center"
+                            }),
                             
                             html.Div([
-                                html.H3("Gesamtbudget"),
-                                html.P(f"{total_budget:,.2f} €")
-                            ], style={"padding": "10px", "border": "1px solid #ccc", "width": "25%"}),
+                                html.H3("Gesamtbudget", style={"textAlign": "center"}),
+                                html.P(f"{total_budget:,.2f} €", style={"textAlign": "center", "margin": "0"})
+                            ], style={
+                                "padding": "10px",
+                                "border": "1px solid #ccc",
+                                "flex": "1",
+                                "display": "flex",
+                                "flexDirection": "column",
+                                "justifyContent": "center"
+                            }),
                             
                             html.Div([
-                                html.H3("Abweichung"),
-                                html.P(f"{abweichung:,.2f} €", style={"color": abweichung_farbe})
-                            ], style={"padding": "10px", "border": "1px solid #ccc", "width": "25%"}),
-                        ], style={"display": "flex", "gap": "20px"}),
+                                html.H3("Abweichung", style={"textAlign": "center"}),
+                                html.P(f"{abweichung:,.2f} €", style={
+                                    "textAlign": "center",
+                                    "color": abweichung_farbe,
+                                    "margin": "0"
+                                })
+                            ], style={
+                                "padding": "10px",
+                                "border": "1px solid #ccc",
+                                "flex": "1",
+                                "display": "flex",
+                                "flexDirection": "column",
+                                "justifyContent": "center"
+                            }),
+                        ], style={
+                            "display": "flex",
+                            "gap": "20px",
+                            "justifyContent": "space-between",
+                            "alignItems": "center"
+                        }),
+
                         
                         html.H2("Trendanalyse – Entwicklung der Gesamtkosten"),
                         dcc.Graph(id="trend-diagramm", figure=default_figure),    
@@ -178,53 +207,108 @@ class BetrachterLayout(BasicLayout):
                         html.H1("Dashboard für Produktionsabteilung"),
                         html.H2(f"Willkommen, {self.user_data['username']}!"),
                         
-                        html.Div([
+                         html.Div([
                             html.Div([
-                                html.H3("Ihre Abteilungskosten"),
-                                html.P(f"{total_ist:,.2f} €")
-                            ], style={"padding": "10px", "border": "1px solid #ccc", "width": "25%"}),
+                                html.H3("Abteilungskosten", style={"textAlign": "center",}),
+                                html.P(f"{total_ist:,.2f} €", style={"textAlign": "center", "margin": "0"})
+                            ], style={
+                                "padding": "10px",
+                                "border": "1px solid #ccc",
+                                "flex": "1",
+                                "display": "flex",
+                                "flexDirection": "column",
+                                "justifyContent": "center",
+                                "fontSize": "20px"
+                            }),
                             
                             html.Div([
-                                html.H3("Budget"),
-                                html.P(f"{total_budget:,.2f} €")
-                            ], style={"padding": "10px", "border": "1px solid #ccc", "width": "25%"}),
+                                html.H3("Budget", style={"textAlign": "center"}),
+                                html.P(f"{total_budget:,.2f} €", style={"textAlign": "center", "margin": "0"})
+                            ], style={
+                                "padding": "10px",
+                                "border": "1px solid #ccc",
+                                "flex": "1",
+                                "display": "flex",
+                                "flexDirection": "column",
+                                "justifyContent": "center",
+                                "fontSize": "20px"
+                            }),
                             
                             html.Div([
-                                html.H3("Abweichung"),
-                                html.P(f"{abweichung:,.2f} €", style={"color": abweichung_farbe})
-                            ], style={"padding": "10px", "border": "1px solid #ccc", "width": "25%"}),
-                        ], style={"display": "flex", "gap": "20px"}),
-                        
+                                html.H3("Abweichung", style={"textAlign": "center"}),
+                                html.P(f"{abweichung:,.2f} €", style={
+                                    "textAlign": "center",
+                                    "color": abweichung_farbe,
+                                    "margin": "0"
+                                })
+                            ], style={
+                                "padding": "10px",
+                                "border": "1px solid #ccc",
+                                "flex": "1",
+                                "display": "flex",
+                                "flexDirection": "column",
+                                "justifyContent": "center",
+                                "fontSize": "20px"
+                            }),
+                        ], style={
+                            "display": "flex",
+                            "gap": "20px",
+                            "justifyContent": "space-between",
+                            "alignItems": "center"
+                        }),
+
                         html.H2("Kostenverlauf ihrer Abteilung"),
                         dcc.Graph(id="trend-diagramm", figure=default_figure),    
 
                         html.Hr(),
+
                         html.Div([
-                            # Kein sichtbares Abteilungs-Dropdown, aber Standardwert gesetzt
+                            # Unsichtbarer Abteilungs-Dropdown (für feste Vorauswahl)
                             dcc.Dropdown(
                                 options=[{"label": "Produktion", "value": "Produktion"}],
                                 value="Produktion",
                                 id="filter-abteilung",
-                                style={"display": "none"}  # Versteckt im Layout
-                            ),  
+                                style={"display": "none"}
+                            ),
 
-                            html.Label("Kostenart auswählen:"),
-                            dcc.Dropdown(
-                                options=[{"label": ka, "value": ka} for ka in sorted(df["Kostenart"].unique())],
-                                value=None,
-                                id="filter-kostenart",
-                                placeholder="Alle Kostenarten"
-                            ),
-                        
-                            html.Label("Zeitraum wählen:"),
-                            dcc.DatePickerRange(
-                                id="filter-zeitraum",
-                                start_date=df["Monat"].min(),
-                                end_date=df["Monat"].max(),
-                                display_format="YYYY-MM"
-                            ),
-                        ], 
-                        style={"marginBottom": "20px", "width": "60%"}),
+                            html.Div([
+                                html.Label("Kostenart auswählen:", style={ "marginBottom": "5px","fontWeight": "bold"}),
+                                dcc.Dropdown(
+                                    options=[{"label": ka, "value": ka} for ka in sorted(df["Kostenart"].unique())],
+                                    value=None,
+                                    id="filter-kostenart",
+                                    placeholder="Alle Kostenarten",
+                                    style={"width": "200px","height": "38px", "fontSize": "14px"}
+                                )
+                            ], style={"display":"flex", 
+                                      "flexDirection":"column",
+                                      "marginRight": "30px",
+                                      "justifyContent": "flex-end"
+                                      }),
+
+                            html.Div([
+                                html.Label("Zeitraum wählen:", style={"marginBottom": "5px", "fontWeight": "bold"}),
+                                dcc.DatePickerRange(
+                                    id="filter-zeitraum",
+                                    start_date=df["Monat"].min(),
+                                    end_date=df["Monat"].max(),
+                                    display_format="YYYY-MM",
+                                    style={"height": "38px", "fontSize": "14px"}
+                                )
+                                ], style={
+                                    "display": "flex",
+                                    "flexDirection": "column",
+                                    "justifyContent": "flex-end"
+                                    })
+                        ],
+                        style={
+                          "display": "flex",
+                          "flexDirection": "row",
+                          "alignItems": "flex-end",
+                          "gap": "30px",
+                          "marginLeft": "20px",
+                          "marginBottom": "30px"
+                        }),
 
                         dcc.Graph(figure=kostenart_fig)
                     ])

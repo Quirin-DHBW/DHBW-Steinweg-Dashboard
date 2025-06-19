@@ -126,8 +126,8 @@ df_year = df[df["Jahr"] == current_year]
 
 total_ist = df_year["Ist"].sum()
 total_budget = df_year.drop_duplicates(subset=["Abteilung", "Jahr"])["Budget"].sum()
-abweichung = total_ist - total_budget
-abweichung_farbe = "green" if abweichung <= 0 else "red"
+abweichung = total_budget - total_ist
+abweichung_farbe = "green" if abweichung >= 0 else "red"
 
 # ye olde kostenart_fig, now with new dataset :3
 kostenart_fig = px.bar(
@@ -196,6 +196,7 @@ def gen_layout():
     global total_ist
     global total_budget
     global abweichung
+    global kostenart_fig
     if user_data["is_logged_in"]:
         match user_data["username"]:
             case "Daniela.Düsentrieb@Firma.p":
@@ -218,6 +219,16 @@ def gen_layout():
                 total_budget = df_year[df_year["Abteilung"] == "Produktion"].drop_duplicates(subset=["Abteilung", "Jahr"])["Budget"].sum()
                 abweichung =  total_budget - total_ist
                 layout_obj = layout.BetrachterLayout(user_data)
+                kostenart_fig = px.bar(
+                    df_kpi_aggregation[
+                    (df_kpi_aggregation["Jahr"] == current_year) &
+                    (df_kpi_aggregation["Abteilung"] == "Produktion")
+                    ],
+                    x="Kategorie",
+                    y="ist_summe",
+                    barmode="group",
+                    title="Kostenarten für Produktion (Ist-Werte)"
+                )
             case "Sigrid.Systemadmin@Firma.p":
                 layout_obj = layout.BasicLayout(user_data)
             case _:
